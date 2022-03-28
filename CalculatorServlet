@@ -1,0 +1,68 @@
+package ru.appline;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import ru.appline.logic.Calculator;
+
+
+import javax.script.ScriptContext;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.rmi.ServerException;
+import java.util.concurrent.atomic.AtomicInteger;
+
+@WebServlet(urlPatterns = "/calculator")
+public class Servlet extends HttpServlet {
+
+   Calculator calculator = new Calculator();
+   Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+       StringBuffer jb = new StringBuffer();
+       String line;
+
+       try {
+           BufferedReader reader = request.getReader();
+           while ((line = reader.readLine()) != null) {
+               jb.append(line);
+           }
+       } catch (Exception e) {
+           System.out.println("Error");
+       }
+       JsonObject jobi = gson.fromJson(String.valueOf(jb), JsonObject.class);
+
+       request.setCharacterEncoding("UTF-8");
+
+       Integer a = jobi.get("a").getAsInt();
+       Integer b = jobi.get("b").getAsInt();
+       String math = jobi.get("math").getAsString();
+
+
+       response.setContentType("application/json;charset=utf-8");
+       PrintWriter pw = response.getWriter();
+
+       if (math.equals("+")) {
+           pw.print(gson.toJson(gson.fromJson("{\"result\":" + calculator.add(a, b) + "}", JsonObject.class)));
+       }
+
+       if (math.equals("-")) {
+           pw.print(gson.toJson(gson.fromJson("{\"result\":" + calculator.sub(a, b) + "}", JsonObject.class)));
+       }
+
+       if (math.equals("*")) {
+           pw.print(gson.toJson(gson.fromJson("{\"result\":" + calculator.mul(a, b) + "}", JsonObject.class)));
+       }
+       if (math.equals("/")) {
+           pw.print(gson.toJson(gson.fromJson("{\"result\":" + calculator.div(a, b) + "}", JsonObject.class)));
+       }
+   }
+}
+
+
+
