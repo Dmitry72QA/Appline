@@ -1,0 +1,60 @@
+package ru.appline.logic;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Model implements Serializable {
+   private static final Model instance = new Model();
+
+   private final Map<Integer, User> model;
+
+   public static Model getInstance() {
+       return instance;
+
+   }
+
+   private Model() {
+       model = new HashMap<>();
+
+       model.put(1, new User("Vasiliy", "Popov", 7000));
+       model.put(2, new User("Volk", "Koly", 22000));
+       model.put(3, new User("Work", "Sahka", 1000));
+       model.put(4, new User("Bob", "Ilyi", 11000));
+   }
+
+   public void add(User user, int id) {
+       model.put(id, user);
+   }
+
+   public Map<Integer, User> getFromList() {
+       return model;
+   }
+
+   public void remove(int id) {
+       model.remove(id);
+   }
+
+   public boolean containsUser(int id) {
+       if (model.containsKey(id)) {
+           return true;
+       } else return false;
+   }
+
+   public User getUser(int id) {
+       return model.get(id);
+   }
+
+   public boolean updateUser(int id, String name, String surname, double salary) {
+
+       if (model.containsKey(id)) {
+           User user = model.get(id);
+           user.setName(name);
+           user.setSurname(surname);
+           user.setSalary(salary);
+
+           return true;
+
+       }else return false;
+   }
+}
